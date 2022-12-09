@@ -1,113 +1,108 @@
+import './Style.css'
 import React, { useEffect, useState } from "react";
 import { Grid, Typography } from "@mui/material";
-// import "./Pages.css";
 import "bootstrap/dist/css/bootstrap.css";
-// import { ToastContainer, toast } from 'react-toastify';
-// import input from '@mui/material/input';
-import './Style.css'
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 
 
 let i;
-let data;
-let initialFileSize = 0;
+var data = []
 const maxVal = 1024 * 1024 * 5;
-let filename ;
-
-const Button1 = () => {
+const Button3 = () => {
 
     const [file, setFile] = useState();
-    const [selected, setSelected] = useState();
-    // const [size,setSize] = (true)
+    const [selected, setSelected] = useState(false);
 
 
     const handleSelect = (e) => {
-     
-    // let filename = e.target.files[0].name
-    let filsiz = e.target.files[0];
-    var filename = filsiz.name
-    // console.log(filename)
-    if (filsiz && !filename) {
-      for(let i=0;i<filename.length;i++){
-       if(e.target.files.length > 0){
-        console.log(filename)
-        // setFile(filename)
-      }else{
-        // setFile(null)
-        console.log("no file")
+      
+      let filsiz = e.target.files;
+      data.push(filsiz)
+      // data.map((e)=>console.log(e[0].name))
+      // console.log(data)
+
+      for(let i=0;i<5;i++){
+
+      // console.log(filsiz[i].size)
+
+      if(filsiz[i].size < maxVal) {
+        setFile(e.target.files)
+        const newData = [...data,data]
+        setSelected(newData)
+        setFile("")
+        // console.log(data)
+        return false
       }
-     }
-    }
-    if (filsiz.size > maxVal) {
-      alert("Please upload a file smaller than 5 MB");
-      return false;
-    }
+        else{
+          // alert("Please upload a file smaller than 5 MB");
+          toast.error('Please Select file less than 5MB!', {
+            position: toast.POSITION.TOP_CENTER
+          });
+          setSelected("")
+          // return false;
+        }
+        // if(filsiz.length > 5){
+        //   alert("block reached to max level")
+        // }
+      }
             
+       }
 
-    // filename = e.target.files[0].name;
-    //     for(let i=0;i<filename.length;i++){
-
-    //     if (e.target.files.length > 0) {
-    //        console.log(filename)
-    //        setFile(filename)
-    //      }else{
-    //       setFile(null)
-    //      }
-    //   }
-
-
-    
+    const deleteHandler = (indexValue) =>{
+       const newData = selected.filter((list,index)=> index !== indexValue)
+       setSelected(newData)
     }
-    // console.log(file)
-
-    // const handleSubmit = (e) =>{
-        
-    //      console.log(file)
-    // }
 
   return (
     <Grid sx={{
         textAlign: "left",
+        ml:10,
+        pt: 3,
+        mt : 3
       }}>
-    <Grid sx={{ mt: 3, ml: 5 }}>
-      <Typography variant="h4"> Upload Documents</Typography>
-      <Typography variant="p">Upload documnets to verify</Typography>
-    </Grid>
-    <Grid sx={{ mt: 3, ml: 5 }}>
-      <Typography variant="h5">Company Financially</Typography>
-      <Typography variant="p">
-        last 3 years of company Income Tax Filling / IT assesment by
-        government
-      </Typography>
-    </Grid>
-    <Grid 
-     sx={{ml: 5,}}
-    className="input-field-cs"
-    // onSubmit = {handleSubmit}
-    >
-      <input
-      className="input-btn"
-      sx={{background: "green", color: "white" }}
-        id="Upload"
-        name="upload"
-        type="file"
-        // value={file || ""}
-        onChange={handleSelect}
-         accept="application/pdf"
-         multiple="multiple"
-      />
-      <button className="main-btn">Upload</button>
+    <Grid sx={{ mt: 3, }}>
+        <Typography variant="h4"> Upload Documents</Typography>
+        <Typography variant="p">Upload documnets to verify</Typography>
+      </Grid>
+      <Grid sx={{ mt: 3, }}>
+        <Typography variant="h5">Company Financially</Typography>
+        <Typography sx={{width: "50%"}} variant="p">
+          last 3 years of company Income Tax Filling / IT assesment by
+          government
+        </Typography>
+      </Grid>
+    <Grid className="input-field-cs">
+      <input className = "input-btn" type="file"  id="Upload"
+      name="upload"
+      onChange={handleSelect}
+       accept=".pdf"
+       multiple="multiple" />
+       <button className="main-btn">Upload</button>
+      <ToastContainer />
     </Grid>
     <Grid>
-    {/* {!file ? "" : file.map((item)=>(
-      <div>
-        <li>{item.name}</li>
-        <li>{item.size}</li>
-      </div>
-    )) } */}
+    <div>
+   <p> {!selected ? "" : selected.map((e,index)=>
+     <ul key = {index}>
+      <a className = "A-Style" href={e[0].name} download>
+        {!e ? "" : e[0].name}
+      </a>
+      {/* <Icon>+</Icon> */}
+      <Grid className='lastbutton' onClick = {()=>deleteHandler(index)}
+       item xs={8}>
+       <DeleteForeverIcon />
+      </Grid>
+     </ul>
+     )}
+     </p> 
+    </div>
     </Grid>
-    
   </Grid>
   )
 }
 
-export default Button1
+export default Button3

@@ -2,45 +2,66 @@ import React, { useEffect, useState } from "react";
 import { Grid, Typography } from "@mui/material";
 import "./Pages.css";
 import "bootstrap/dist/css/bootstrap.css";
-// import { ToastContainer, toast } from 'react-toastify';
-import input from '@mui/material/input';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 let i;
 var data = []
+
+const maxVal = 1024 * 1024 * 5;
+// const listItems = document.getElementsByTagName('ul').style.listStyle="none";
 const Button3 = () => {
+  
+  const [file, setFile] = useState();
+  const [selected, setSelected] = useState(false);
 
-    const [file, setFile] = useState();
-    const [selected, setSelected] = useState(false);
 
 
-    const handleSelect = (e) => {
-        e.preventDefault();
-        data = e.target.value;
-        for(i=0;i<data.length;i++){
-          setSelected(data)
-          //  console.log(data)
-         }
-        console.log("-->",data)
-        //  const fileSize = data[i].size / 1024 / 1024
-        //  if(fileSize.size > 2){
-        //   alert("file is too large")
-        //  }
-        //  else{
-    
-         if(file !== null){
-          setFile(data)
-        }else{
-          setFile(null);
-        }
+  
+  const handleSelect = (e) => {
       
-        //  }
-       }
+    let filsiz = e.target.files;
+    data.push(filsiz)
+    // data.map((e)=>console.log(e[0].name))
+    // console.log(data)
 
+    for(let i=0;i<5;i++){
+
+    // console.log(filsiz[i].size)
+
+    if(filsiz[i].size < maxVal) {
+      setFile(e.target.files)
+      const newData = [...data,data]
+      setSelected(newData)
+      setFile("")
+      // console.log(data)
+      return false
+    }
+      else{
+        toast.error('Please Select file less than 5MB!', {
+          position: toast.POSITION.TOP_CENTER
+        });
+        setSelected("")
+      }
+      if(filsiz.length > 5){
+        alert("block reached to max level")
+      }
+    }
+          
+     }
+
+  const deleteHandler = (indexValue) =>{
+     const newData = selected.filter((list,index)=> index !== indexValue)
+     setSelected(newData)
+  }
+
+ 
   return (
     <Grid sx={{
         textAlign: "left",
-        ml:5
+        ml:10
       }}>
     <Grid sx={{ mt: 3 }}>
       <Typography variant="h5">Team Structure</Typography>
@@ -50,8 +71,27 @@ const Button3 = () => {
       <input className = "input-btn" type="file"  id="Upload"
       name="upload"
       onChange={handleSelect}
-       accept=".pdf" />
+       accept=".pdf"
+       multiple="multiple" />
        <button className="main-btn">Upload</button>
+       <ToastContainer />
+    </Grid>
+    <Grid>
+    <div>
+   <p> {!selected ? "" : selected.map((e,index)=>
+     <ul key = {index}>
+      <a className = "A-Style" href={e[0].name} download>
+        {!e ? "" : e[0].name}
+      </a>
+      {/* <Icon>+</Icon> */}
+      <Grid className='lastbutton' onClick = {()=>deleteHandler(index)}
+       item xs={8}>
+       <DeleteForeverIcon />
+      </Grid>
+     </ul>
+     )}
+     </p> 
+    </div>
     </Grid>
   </Grid>
   )
