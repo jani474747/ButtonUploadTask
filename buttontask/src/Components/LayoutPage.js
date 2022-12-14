@@ -6,6 +6,7 @@ import Button4 from './Button4'
 import Button5 from './Button5'
 import { Grid } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Typography } from "@mui/material";
 
 const LayoutPage = () => {
   return (
@@ -13,6 +14,15 @@ const LayoutPage = () => {
     height: "auto",
     // border: "1px solid tra",
     boxShadow: "rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;"}} >
+      <Grid sx={{ mt: 3,
+        textAlign: "left",
+        ml:10,
+        pt: 3,
+        mt : 3
+      }}>
+        <Typography variant="h4"> Upload Documents</Typography>
+        <Typography variant="p">Upload documnets to verify</Typography>
+      </Grid>
     <Button1 />
     <Button2 />
     <Button3 />

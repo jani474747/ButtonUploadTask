@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Grid, Typography } from "@mui/material";
-import "./Pages.css";
+import "./Style.css";
 import "bootstrap/dist/css/bootstrap.css";
 // import { ToastContainer, toast } from 'react-toastify';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -10,51 +10,68 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 
-let i;
+
 var data = []
 const maxVal = 1024 * 1024 * 5;
+const maxLen = 5;
 const Button2 = () => {
   
     const [file, setFile] = useState();
     const [selected, setSelected] = useState(false);
+    const [click, setClick] = useState("");
+  // const [isdisabled, setIsDisabled] = useState(false)
 
    
     const handleSelect = (e) => {
-      
       let filsiz = e.target.files;
-      data.push(filsiz)
-      // data.map((e)=>console.log(e[0].name))
-      // console.log(data)
-
-      for(let i=0;i<5;i++){
-
-      // console.log(filsiz[i].size)
-
-      if(filsiz[i].size < maxVal) {
-        setFile(e.target.files)
-        const newData = [...data,data]
-        setSelected(newData)
-        setFile("")
-        // console.log(data)
-        return false
-      }
-        else{
-          toast.error('Please Select file less than 5MB!', {
-            position: toast.POSITION.TOP_CENTER
-          });
-          setSelected("")
-        }
-        if(filsiz.length > 5){
-          alert("block reached to max level")
-        }
-      }
-            
-       }
-
-    const deleteHandler = (indexValue) =>{
-       const newData = selected.filter((list,index)=> index !== indexValue)
-       setSelected(newData)
+      console.log(filsiz)
+      
+    if(!filsiz.length <= 0){
+      data.push(filsiz);
     }
+  
+      for (let i = 0; i < data.length; i++) {
+        // console.log(filsiz[i].size)
+  
+        if (filsiz[i]?.size > maxVal) {
+          toast.error("Please Select file less than 5MB!", {
+            position: toast.POSITION.TOP_CENTER,
+          });
+           data.pop()
+     
+        } else {
+          setFile(e.target.files);
+          setSelected([...data]);
+          if (data.length >= maxLen) {
+            toast.error("Reached Max Limit!", {
+              position: toast.POSITION.TOP_CENTER,
+            });
+            // data.pop()
+            data.splice(5,1)
+            setSelected([...data])
+            break;
+        }else{
+          continue;
+        }
+       
+      }
+    };
+  }
+
+  const deleteHandler = (indexValue) => {
+    // const newData = selected.filter((list, index) => index !== indexValue);
+    data.splice(indexValue,1)
+    // console.log(newData)
+    setSelected([...data]);
+    // setIsDisabled(true)
+  };
+
+  const handledownload = (e) => {
+    const download = selected(e.target.value);
+    console.log("data-->", download);
+    setClick(download);
+  };
+
 
   return (
     <Grid sx={{
@@ -74,7 +91,9 @@ const Button2 = () => {
       name="upload"
       onChange={handleSelect}
        accept=".pdf"
-       multiple="multiple" />
+       multiple="multiple" 
+      //  disabled = {isdisabled}
+       />
        <button className="main-btn">Upload
        </button>
        <ToastContainer />
@@ -83,11 +102,13 @@ const Button2 = () => {
     <div>
    <p> {!selected ? "" : selected.map((e,index)=>
      <ul key = {index}>
-      <a className = "A-Style" href={e[0].name} download>
-        {!e ? "" : e[0].name}
+      <a className = "A-Style" href={e[0]?.name}
+      onClick={handledownload}
+      download>
+        {!e ? "" : e[0]?.name}
       </a>
       {/* <Icon>+</Icon> */}
-      <Grid className='lastbutton' onClick = {()=>deleteHandler(index)}
+      <Grid sx={{ml : 5, size : "10px"}} className='lastbutton' onClick = {()=>deleteHandler(index)}
        item xs={8}>
        <DeleteForeverIcon />
       </Grid>
