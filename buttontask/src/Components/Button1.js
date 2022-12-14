@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import swal from 'sweetalert';
 
 var data = [];
 const maxVal = 1024 * 1024 * 5;
@@ -18,51 +19,53 @@ const Button1 = () => {
 
  
   const handleSelect = (e) => {
-    let filsiz = e.target.files;
+    let filsiz = e.target.files;   // targeting the file which is selected
     console.log(filsiz)
     
-  if(!filsiz.length <= 0){
+  if(!filsiz.length <= 0){   // if file length is greater than 0 the pushing filsiz into data an empty array like (data = [])
     data.push(filsiz);
   }
-
-    for (let i = 0; i < data.length; i++) {
-      // console.log(filsiz[i].size)
-
-      if (filsiz[i]?.size > maxVal) {
-        toast.error("Please Select file less than 5MB!", {
-          position: toast.POSITION.TOP_CENTER,
-        });
+ 
+      if (filsiz[0]?.size > maxVal) {
+        // toast.error("Please Select file less than 5MB!", {   // filsiz[0] means array of object 0 array is filsiz and in object 0 the firs value stores
+        //   position: toast.POSITION.TOP_CENTER,
+        // });
+        // alert("Please Select file less than 5MB!")
+        swal( "Oops" ,  "Please Select file less than 5MB!" ,  "error" )
          data.pop()
    
-      } else {
+      }else if(data.length >= maxLen && filsiz[0]?.size > maxVal){  // if both greater than maxlength 5 and maxValue = 5MB it should show only the toster given below 
+        console.log(data.length)
+        // toast.error("Reached Max limit & Size should be less than 5MB", {
+        //   position: toast.POSITION.TOP_CENTER,
+        // });
+        // alert("Reached Max limit & Size should be less than 5MB")
+        data.splice(5,1)
+        setSelected([...data])
+      } else if(filsiz[0]?.size < maxVal){ // if size is less than 5MB it should add there in UI
         setFile(e.target.files);
         setSelected([...data]);
-        if (data.length >= maxLen) {
-          toast.error("Reached Max Limit!", {
-            position: toast.POSITION.TOP_CENTER,
-          });
-          // data.pop()
-          data.splice(5,1)
-          setSelected([...data])
-          break;
-      }else{
-        continue;
+        if (data.length >= maxLen) {   // if reaches to max size show error
+          // toast.error("Reached Max Limit!", {
+          //   position: toast.POSITION.TOP_CENTER,
+          // });
+          // alert("Reached Max Limit!")
+          swal( "Oops" ,  "Reached Max Limit!" ,  "error" )
+          data.splice(5,1)  // remove last selected one after 5th
+          setSelected([...data]) // add data
       }
      
     }
-  };
+  // };
 }
 
 const deleteHandler = (indexValue) => {
-  // const newData = selected.filter((list, index) => index !== indexValue);
   data.splice(indexValue,1)
-  // console.log(newData)
   setSelected([...data]);
-  // setIsDisabled(true)
 };
 
 const handledownload = (e) => {
-  const download = selected(e.target.value);
+   let download = e.target.data
   console.log("data-->", download);
   setClick(download);
 };
@@ -105,8 +108,10 @@ const handledownload = (e) => {
                     <a
                       className="A-Style"
                       value={click}
-                      href={e[0].name}
+                      // href = "/url"
                       onClick={handledownload}
+                      // download
+                      href={e[0].name}
                       download
                     >
                       {!e ? null : e[0].name}
